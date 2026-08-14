@@ -41,7 +41,7 @@ namespace WebViewControl {
             }
         }
 
-        protected override void OnGotFocus(GotFocusEventArgs e) {
+        protected override void OnGotFocus(FocusChangedEventArgs e) {
             if (!e.Handled) {
                 e.Handled = true;
                 base.OnGotFocus(e);
