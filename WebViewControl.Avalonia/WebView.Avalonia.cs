@@ -31,6 +31,7 @@ namespace WebViewControl {
         partial void ExtraInitialize() {
             VisualChildren.Add(chromium);
             chromium[!FocusableProperty] = this[!FocusableProperty];
+            chromium[!DragDrop.AllowDropProperty] = this[!DragDrop.AllowDropProperty];
             chromium.AddressChanged += (o, address) => ExecuteInUI(() => Address = address);
         }
 
