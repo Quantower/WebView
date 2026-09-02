@@ -4,14 +4,14 @@
     <TargetDotnetVersion>net8.0</TargetDotnetVersion>
     <Platforms>x64;ARM64</Platforms>
     <AvaloniaVersion>12.1.0</AvaloniaVersion>
-    <CefGlueVersion>120.7000.5</CefGlueVersion>
+    <CefGlueVersion>120.7000.8</CefGlueVersion>
   </PropertyGroup>
 
   <PropertyGroup>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <FileVersion>2.0.0.0</FileVersion>
     <!-- Please see https://github.com/OutSystems/WebView?tab=readme-ov-file#versioning for versioning rules -->
-    <Version>3.121.1</Version>
+    <Version>3.121.4</Version>
     <Authors>OutSystems</Authors>
     <Product>WebViewControl</Product>
     <Copyright>Copyright © OutSystems 2023</Copyright>
