@@ -33,6 +33,7 @@ namespace WebViewControl {
             LogicalChildren.Add(chromium);
             chromium[!FocusableProperty] = this[!FocusableProperty];
             chromium[!DragDrop.AllowDropProperty] = this[!DragDrop.AllowDropProperty];
+            chromium[!ToolTip.ShowDelayProperty] = this[!ToolTip.ShowDelayProperty];
             chromium.AddressChanged += (o, address) => ExecuteInUI(() => Address = address);
         }
 
