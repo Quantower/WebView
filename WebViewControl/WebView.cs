@@ -484,7 +484,10 @@ namespace WebViewControl {
                 var frameName = e.Frame.Name;
 
                 lock (JsExecutors) {
-                    DisposeJavascriptExecutors(new[] { frameName });
+                    // temporary and speculative frames are released under the name of a live frame
+                    if (JsExecutors.TryGetValue(frameName ?? "", out var jsExecutor) && jsExecutor.IsBoundTo(e.Frame)) {
+                        DisposeJavascriptExecutors(new[] { frameName });
+                    }
                 }
 
                 JavascriptContextReleased?.Invoke(frameName);

@@ -73,6 +73,8 @@ namespace WebViewControl {
 
             public bool IsValid => frame == null || frame.IsValid; // consider valid when not bound (yet) or frame is valid
 
+            public bool IsBoundTo(CefFrame frame) => this.frame?.Identifier == frame.Identifier;
+
             private bool IsFlushTaskInitializing => flushTask == null || flushTask.Status < TaskStatus.Running;
 
             public void StartFlush(CefFrame frame) {

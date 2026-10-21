@@ -8,6 +8,8 @@ namespace Tests.WebView {
 
     public class JavascriptEvaluation : WebViewTestBase {
 
+        private const string CrossSiteUrl = "https://cross-site.test/";
+
         [Test(Description = "A simple script evaluates correctly")]
         public async Task EvaluateSimpleScript() {
             await Run(async () => {
@@ -168,6 +170,49 @@ namespace Tests.WebView {
                     taskCompletionSource.SetResult(e);
                     return true;
                 });
+            });
+        }
+
+        [Test(Description = "Scripts still evaluate in the main frame after a cross-site iframe loads")]
+        public async Task EvaluationWorksAfterCrossSiteIframeLoads() {
+            await Run(async () => {
+                TargetView.BeforeResourceLoad += (resourceHandler) => {
+                    if (resourceHandler.Url.StartsWith(CrossSiteUrl)) {
+                        resourceHandler.RespondWithText("<html><body>iframe</body></html>");
+                    }
+                };
+                var iframeLoaded = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                TargetView.Navigated += (url, frameName) => {
+                    if (url.StartsWith(CrossSiteUrl)) {
+                        iframeLoaded.TrySetResult(true);
+                    }
+                };
+
+                TargetView.ExecuteScript($"document.body.innerHTML = '<iframe src=\"{CrossSiteUrl}\"></iframe>'");
+                await iframeLoaded.Task;
+
+                var result = await TargetView.EvaluateScript<int>("return 2+1", timeout: TimeSpan.FromSeconds(5));
+                Assert.AreEqual(3, result);
+            });
+        }
+
+        [Test(Description = "Scripts still evaluate in the main frame after a cross-site navigation that never commits")]
+        public async Task EvaluationWorksAfterUncommittedCrossSiteNavigation() {
+            await Run(async () => {
+                TargetView.BeforeResourceLoad += (resourceHandler) => {
+                    if (resourceHandler.Url.StartsWith(CrossSiteUrl)) {
+                        resourceHandler.RespondWithText("");
+                        resourceHandler.Handler.Status = 204;
+                    }
+                };
+                var contextReleased = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                TargetView.JavascriptContextReleased += _ => contextReleased.TrySetResult(true);
+
+                TargetView.LoadUrl(CrossSiteUrl);
+                await contextReleased.Task;
+
+                var result = await TargetView.EvaluateScript<int>("return 2+1", timeout: TimeSpan.FromSeconds(5));
+                Assert.AreEqual(3, result);
             });
         }
     }
